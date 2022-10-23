@@ -1,21 +1,21 @@
 # MyScripts
 
-Linux root/非root环境配置脚本
+Linux / Windows environment setup script
 
-## root : [安装命令查询](WEB)
+Type what you want, quickly install to save your time for searching how to install and its offical document
 
-## 非root
+## Usage
+
+> only need python3 basic environment
 
 ```bash
-wget --no-check-certificate --content-disposition https://raw.githubusercontent.com/luzhixing12345/MyScripts/main/setup.py
-python setup.py
+wget --no-check-certificate https://raw.githubusercontent.com/luzhixing12345/MyScripts/main/env_setup.py
+
+python3 env_setup.py #Linux
+python env_setup.py #Windows
 ```
 
-之后根据提示依次输入想要下载的包/库的名字即可,目前支持的源码编译的环境
+## Support
 
-- [x] snappy
-- [x] zlib
-- [x] gflags
-- [x] bzip2
-- [x] lz4
-- [x] zstandard
+![Python](https://img.shields.io/badge/Python-FFD43B?style=for-the-badge&logo=python&logoColor=blue)
+![NPM](https://img.shields.io/badge/npm-CB3837?style=for-the-badge&logo=npm&logoColor=white)
