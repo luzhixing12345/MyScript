@@ -1,0 +1,12 @@
+{
+    "name": "opencv",
+    "search_keywords": ["opencv","cv","cv2","image","video"],
+    "package_manager": ["pip"],
+    "install": ["pip install opencv-python"],
+    "import" : ["import cv2"],
+    "repository": "https://github.com/opencv/opencv-python",
+    "document": ["https://docs.opencv.org/4.x/"],
+    "simple_usage" : [
+        "import cv2"
+    ]
+}

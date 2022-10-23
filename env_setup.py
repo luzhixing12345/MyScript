@@ -1,25 +1,11 @@
-'''
-*Copyright (c) 2022 All rights reserved
-*@description: auto Linux environment setup without root
-*@author: Zhixing Lu
-*@date: 2022-10-23
-*@email: luzhixing12345@163.com
-*@Github: luzhixing12345
-'''
 
-
-
-
-
-
-
-
-
+import platform
+import sys
 
 # --------------------------------------------------------
 # Keyboard input handler
 # --------------------------------------------------------
-
+s = []
 class _GetchUnix:
     def __call__(self):
         import sys, tty, termios
@@ -37,6 +23,16 @@ class _GetchUnix:
             if ch in i:
                 result.append(i)
         return result
-    
-a = _GetchUnix()
-print(a())
+
+
+# --------------------------------------------------------
+# OS & package manager information
+# --------------------------------------------------------
+def check_system_info():
+    SYSTEM_INFO = {}
+    SYSTEM_INFO['machine'] = platform.machine()
+    SYSTEM_INFO['network'] = platform.node()
+    SYSTEM_INFO['processor'] = platform.processor()
+    SYSTEM_INFO['release'] = platform.release()
+    SYSTEM_INFO['OS'] = platform.system()
+    return SYSTEM_INFO
