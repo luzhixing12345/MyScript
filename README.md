@@ -8,11 +8,16 @@ Type what you want, quickly install to save your time for searching how to insta
 
 > only need python3 basic environment
 
-```bash
-wget --no-check-certificate https://raw.githubusercontent.com/luzhixing12345/MyScripts/main/env_setup.py
+get source script
 
-python3 env_setup.py #Linux
-python env_setup.py #Windows
+```bash
+wget https://raw.githubusercontent.com/luzhixing12345/MyScripts/main/env_setup.py
+```
+
+run
+
+```bash
+python env_setup.py
 ```
 
 ## Support
