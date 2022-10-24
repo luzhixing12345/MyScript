@@ -18,34 +18,25 @@ from env_setup import check_system_info
 
 SCRIPT_NAME = 'Myscript.py'
 CONFIGURATION_FOLDER = 'configuration'
-LANGUAGE = ['python','nodejs','java','go','rust']
-PACKAGE_MANAGER = {
-    'python': ['pip','conda'],
-    'nodejs': ['npm'],
-    'java': ['maven'],
-    'go': ['gomod'],
-    'rust': ['cargo']
-}
-
+Content = {}
 
 # --------------------------------------------------------
 # Integrate
 # --------------------------------------------------------
 
 def main():
-    print(check_system_info())
-    Category = {}
-    for root,dirs,files in os.walk(CONFIGURATION_FOLDER,topdown=False):
-        # print("@@@",root,dirs,files)
+    check_system_info()
+    for root,_,files in os.walk(CONFIGURATION_FOLDER,topdown=False):
         for name in files:
-            # print(root,name)
             process_json(os.path.join(root, name))
     
+    print(Content)
 
-def process_json(path):
-    print(path)
+def process_json(path:str):
+    category = path.split(os.sep)[-2]
+    name = path.split(os.sep)[-1][:-5] # -5 for .json
     with open(path,'r') as f:
-        return json.load(f)
+        Content[category][name] = json.load(f)
 
 
 

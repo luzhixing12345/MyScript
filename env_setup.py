@@ -1,9 +1,10 @@
 
 import platform
-import sys
+
 
 # --------------------------------------------------------
 # Keyboard input handler
+# https://docs.python.org/zh-cn/3.7/library/termios.html
 # --------------------------------------------------------
 s = []
 class _GetchUnix:
@@ -34,5 +35,10 @@ def check_system_info():
     SYSTEM_INFO['network'] = platform.node()
     SYSTEM_INFO['processor'] = platform.processor()
     SYSTEM_INFO['release'] = platform.release()
-    SYSTEM_INFO['OS'] = platform.system()
-    return SYSTEM_INFO
+    SYSTEM_INFO['Type'] = platform.system()
+    SYSTEM_INFO['OS'] = platform.platform()
+    SYSTEM_INFO['version'] = platform.version()
+    SYSTEM_INFO['bit'] = platform.architecture()
+    SYSTEM_INFO['python'] = platform.python_version()
+    for key,value in SYSTEM_INFO.items():
+        print(f"{key}: {value}")

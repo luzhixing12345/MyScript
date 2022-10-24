@@ -34,8 +34,6 @@ python MyScript.py
 
 ### Upgrade
 
-redownload or run
-
 ```bash
 python MyScript.py --upgrade
 ```
@@ -47,7 +45,7 @@ python MyScript.py --upgrade
 
 ## Contribution
 
-Expecially thanks for your contribution!
+Hope for your contribution and expecially thanks for your contribution!
 
 ### Contribute for information
 
