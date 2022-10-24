@@ -24,7 +24,9 @@ Type what you want, `MyScript` will save your time for searching:
 
 - Windows
 
-  [download](SRC)
+  ```bash
+  curl https://raw.githubusercontent.com/luzhixing12345/MyScript/main/MyScript.py
+  ```
 
 ### Run
 
@@ -32,11 +34,20 @@ Type what you want, `MyScript` will save your time for searching:
 python MyScript.py
 ```
 
-### Upgrade
+### Other options
 
-```bash
-python MyScript.py --upgrade
-```
+- get the lastest file to upgrade
+
+  ```bash
+  python3 MyScript.py --upgrade
+  ```
+
+- Set global environment variables for `MyScript.py` to use shorter
+
+  ```bash
+  python3 MyScript.py -> myscript
+  python3 MyScript.py --upgrade -> myscript -upgrade
+  ```
 
 ## Support
 
