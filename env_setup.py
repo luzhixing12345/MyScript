@@ -1,29 +1,85 @@
 
 import platform
+import sys, tty, termios
 
+ESC = chr(27)
+SPACE = chr(32)
+BACKSPACE = chr(127)
+TAB = chr(9)
 
 # --------------------------------------------------------
 # Keyboard input handler
 # https://docs.python.org/zh-cn/3.7/library/termios.html
 # --------------------------------------------------------
-s = []
-class _GetchUnix:
+s = ['12','13','23','123','45','25']
+
+class _GetchWindows:
+    def __init__(self):
+        import msvcrt
+
     def __call__(self):
-        import sys, tty, termios
-        fd = sys.stdin.fileno()
-        old_settings = termios.tcgetattr(fd)
-        tty.setraw(sys.stdin.fileno())
-        ch = sys.stdin.read(1)
-        termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
-        return self.f(ch)
-        # return ch
+        import msvcrt
+        return msvcrt.getch()
+
+class _GetchUnix:
     
-    def f(self,ch):
-        result = []
-        for i in s:
-            if ch in i:
-                result.append(i)
-        return result
+    def __init__(self) -> None:
+        
+        self.fd = sys.stdin.fileno()
+        self.old_settings = termios.tcgetattr(self.fd)
+    
+    def getchar(self):
+        
+        try:
+            tty.setraw(sys.stdin.fileno())
+            ch = sys.stdin.read(1)
+        finally:
+            termios.tcsetattr(self.fd, termios.TCSADRAIN,self.old_settings)
+        return ch
+    
+    
+    
+# print("try to input something: ",end='')
+# sys.stdout.flush()
+
+
+def f(ch):
+    global show_str
+    if ch == ESC:
+        pass
+        # sys.stdout.write("Esc pressed")
+    elif ch == SPACE:
+        show_str += ' '
+        # sys.stdout.write("space pressed")
+    elif ch == TAB:
+        show_str += '    '
+        # sys.stdout.write("Tab pressed")
+    elif ch == BACKSPACE:
+        # print("detected backspace!!")
+        # sys.stdout.write("\b")
+        # show_str = show_str[:-1]
+        ch = '\b \b'
+    elif ch == 'q':
+        # sys.stdout.write("break")
+        # sys.stdout.flush()
+        return 1
+    else:
+        # sys.stdout.write(ch)
+        show_str += ch
+    return ch
+    # sys.stdout.flush()
+
+# a = _GetchUnix()
+# print(a.getchar())
+# while True:
+#     a = _GetchUnix()
+#     # a = _GetchWindows()
+#     ch = f(a())
+#     if ch == 1:
+#         break
+
+#     sys.stdout.write('\033[1;30;47m'+ch)
+#     sys.stdout.flush()
 
 
 # --------------------------------------------------------

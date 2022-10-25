@@ -1,9 +1,10 @@
 # MyScript
 
+MyScript is a script for auto environment setup
+
 Type what you want, `MyScript` will save your time for searching:
 
 - how to install
-- how to use
 - where to find offical document
 
 ## Introduction
@@ -12,7 +13,11 @@ Type what you want, `MyScript` will save your time for searching:
 
 ## Usage
 
-> only need python3 basic environment
+### Requirement
+
+```bash
+pip install rich
+```
 
 ### Get source script
 
@@ -39,14 +44,14 @@ python MyScript.py
 - get the lastest file to upgrade
 
   ```bash
-  python3 MyScript.py --upgrade
+  python MyScript.py --upgrade
   ```
 
 - Set global environment variables for `MyScript.py` to use shorter
 
   ```bash
-  python3 MyScript.py -> myscript
-  python3 MyScript.py --upgrade -> myscript -upgrade
+  python MyScript.py -> myscript
+  python MyScript.py --upgrade -> myscript -upgrade
   ```
 
 ## Support
@@ -66,8 +71,5 @@ Hope for your contribution and expecially thanks for your contribution!
 - finsh your json and DO **NOT** run build.py
 - create a new pull request
 
-### Contribute for scoure code
+## Develop Reference
 
-```bash
-pip install requirements.txt
-```

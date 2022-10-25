@@ -33,10 +33,9 @@ def main():
     print(Content)
 
 def process_json(path:str):
-    category = path.split(os.sep)[-2]
     name = path.split(os.sep)[-1][:-5] # -5 for .json
     with open(path,'r') as f:
-        Content[category][name] = json.load(f)
+        file = json.load(f)
 
 
 
