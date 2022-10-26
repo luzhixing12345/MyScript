@@ -1,12 +1,12 @@
 
 import platform
 import sys, tty, termios
-
+import select
 ESC = chr(27)
 SPACE = chr(32)
 BACKSPACE = chr(127)
 TAB = chr(9)
-
+TAB_SPACE = 4
 # --------------------------------------------------------
 # Keyboard input handler
 # https://docs.python.org/zh-cn/3.7/library/termios.html
@@ -26,61 +26,29 @@ class _GetchUnix:
     def __init__(self) -> None:
         
         self.fd = sys.stdin.fileno()
-        self.old_settings = termios.tcgetattr(self.fd)
+        self.old_settings = termios.tcgetattr(sys.stdin)
+        tty.setcbreak(self.fd)
     
     def getchar(self):
         
-        try:
-            tty.setraw(sys.stdin.fileno())
+        # try:
+        
+        if select.select([sys.stdin], [], [], 0) == ([sys.stdin], [], []):
             ch = sys.stdin.read(1)
-        finally:
-            termios.tcsetattr(self.fd, termios.TCSADRAIN,self.old_settings)
-        return ch
+            return self.handleinput(ch)
+        else:
+            return 'WAIT'
     
-    
-    
-# print("try to input something: ",end='')
-# sys.stdout.flush()
-
-
-def f(ch):
-    global show_str
-    if ch == ESC:
-        pass
-        # sys.stdout.write("Esc pressed")
-    elif ch == SPACE:
-        show_str += ' '
-        # sys.stdout.write("space pressed")
-    elif ch == TAB:
-        show_str += '    '
-        # sys.stdout.write("Tab pressed")
-    elif ch == BACKSPACE:
-        # print("detected backspace!!")
-        # sys.stdout.write("\b")
-        # show_str = show_str[:-1]
-        ch = '\b \b'
-    elif ch == 'q':
-        # sys.stdout.write("break")
-        # sys.stdout.flush()
-        return 1
-    else:
-        # sys.stdout.write(ch)
-        show_str += ch
-    return ch
-    # sys.stdout.flush()
-
-# a = _GetchUnix()
-# print(a.getchar())
-# while True:
-#     a = _GetchUnix()
-#     # a = _GetchWindows()
-#     ch = f(a())
-#     if ch == 1:
-#         break
-
-#     sys.stdout.write('\033[1;30;47m'+ch)
-#     sys.stdout.flush()
-
+    def handleinput(self,ch):
+        if ch == ESC:
+            termios.tcsetattr(sys.stdin, termios.TCSADRAIN, self.old_settings)
+            exit(0)
+        elif ch == SPACE:
+            return ' '
+        elif ch == TAB:
+            return ' ' * TAB_SPACE
+        else:
+            return ch
 
 # --------------------------------------------------------
 # OS & package manager information

@@ -1,6 +1,6 @@
 # MyScript
 
-MyScript is a script for auto environment setup
+MyScript is a Python script for auto environment setup
 
 Type what you want, `MyScript` will save your time for searching:
 
@@ -73,3 +73,4 @@ Hope for your contribution and expecially thanks for your contribution!
 
 ## Develop Reference
 
+- [rich](https://github.com/Textualize/rich)
