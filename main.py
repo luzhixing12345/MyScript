@@ -1,18 +1,17 @@
 
 import argparse
-from env_setup import BACKSPACE, ESC, _GetchUnix
+from env_setup import BACKSPACE, CURSOR_BLINKING_SLEEPTIME, CURSOR_BLINKING_SYMBOL, CURSOR_BLINKING_TIMER, VERSION,CMD_PROMPT,CMD_PROMPT_COLOR,_GetchUnix
 from rich.console import Console
 from rich.columns import Columns
 from rich.live import Live
 from rich.panel import Panel
 from rich.console import Group
 import time
-VERSION = "0.0.1"
-keyboard =  _GetchUnix()
-
+from env_setup import keyboard
 s = ['1','12','13','23','24','25','15','34','35']
 word = ''
-input_clock = 0
+TIMER = 0
+
 def main(args):
 
     # if args.upgrade:
@@ -23,7 +22,7 @@ def main(args):
     console.print(Panel(f"[b]MyScript[/b] [magenta]v{VERSION}[/]\n\n[dim]script for auto environment setup in the terminal",style="on blue"),justify='center')
     
     
-    with Live(Panel(f"[b cyan][MYSCRIPT]: "),auto_refresh=False) as input:
+    with Live(Panel(f"[b {CMD_PROMPT_COLOR}]{CMD_PROMPT}: "),auto_refresh=False) as input:
         
         while True:
             input.update(main_input())
@@ -37,28 +36,36 @@ def main(args):
 
 
 def main_input():
-    global word,input_clock
+    global word,TIMER
+    blink_signal = False # whether add CURSOR_BLINKING_SYMBOL after word
     key = keyboard.getchar()
-    if key == BACKSPACE:
+    if key == BACKSPACE: # remove last character
         word = word[:-1]
     elif key == 'WAIT':
-        wait_signal = '|' if input_clock else ''
-        input_clock = abs(input_clock-1)
-        word+=wait_signal
-        time.sleep(0.5)
+        # wait for input
+        # Simulate cursor blinking
+        TIMER += 1
+        if TIMER == CURSOR_BLINKING_TIMER:
+            word += CURSOR_BLINKING_SYMBOL
+            blink_signal = True
+            TIMER = 0
+        time.sleep(CURSOR_BLINKING_SLEEPTIME)
     else:
         word += key
     
-    pannel = Panel(f"[b cyan][MYSCRIPT]: {word}")
-    if len(word)!=0 and word[-1]=='|':
+    pannel = Panel(f"[b {CMD_PROMPT_COLOR}]{CMD_PROMPT}: {word}")
+    # clear CURSOR_BLINKING_SYMBOL
+    if len(word)!=0 and blink_signal:
         word = word[:-1]
-    column = handle_search()
+    column = search_result()
     return Group(pannel,column)
 
-def handle_search():
-    global s
+def search_result():
+    global s    
     result = []
     for i in s:
+        if word == '':
+            break
         if word in i:
             result.append(i)
 
