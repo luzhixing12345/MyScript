@@ -9,8 +9,6 @@ Type what you want, `MyScript` will save your time for searching:
 
 ## Introduction
 
-[gif](gif)
-
 ## Usage
 
 ### Requirement
@@ -19,24 +17,10 @@ Type what you want, `MyScript` will save your time for searching:
 pip install rich
 ```
 
-### Get source script
-
-- Linux
-
-  ```bash
-  wget https://raw.githubusercontent.com/luzhixing12345/MyScript/main/MyScript.py
-  ```
-
-- Windows
-
-  ```bash
-  curl https://raw.githubusercontent.com/luzhixing12345/MyScript/main/MyScript.py
-  ```
-
 ### Run
 
 ```bash
-python MyScript.py
+python main.py
 ```
 
 ### Other options
