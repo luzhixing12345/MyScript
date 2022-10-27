@@ -1,5 +1,8 @@
 # MyScript
 
+![Linux](https://img.shields.io/badge/Linux-FCC624?style=for-the-badge&logo=linux&logoColor=black)
+![python](https://img.shields.io/badge/Python-FFD43B?style=for-the-badge&logo=python&logoColor=blue)
+
 MyScript is a Python script for auto environment setup
 
 Type what you want, `MyScript` will save your time for searching:
@@ -40,7 +43,8 @@ python main.py
 
 ## Support
 
-![python](https://img.shields.io/badge/python-FFD43B?style=for-the-badge&logo=python&logoColor=blue)
+![Conda](https://img.shields.io/badge/conda-342B029.svg?&style=for-the-badge&logo=anaconda&logoColor=white)
+![PYPI](https://img.shields.io/badge/pypi-3775A9?style=for-the-badge&logo=pypi&logoColor=white)
 ![NPM](https://img.shields.io/badge/npm-CB3837?style=for-the-badge&logo=npm&logoColor=white)
 
 ## Contribution
