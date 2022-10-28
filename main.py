@@ -14,6 +14,8 @@ s = ['1','12','13','23','24','25','15','34','35']
 # global variable
 # --------------------------------------------------------
 word = ''                     # input word
+history_words = []            # search history
+history_word_pointer = -1
 mode = INPUT_MODE             # [INPUT_MODE,SELECT_MODE,DISPLAY_MODE,'RUN'] (see more info in env_setup.py)
 select_item = -1              # selected item in SELECT_MODE
 display_item = -1             # displayed item in DISPLAY_MODE
@@ -82,7 +84,7 @@ def search_result():
     return result
 
 def function_handler(key):
-    global word, mode, select_item,display_item
+    global word, mode, select_item,display_item,history_words,history_word_pointer
     if key == 'ESC':
         # back to the last mode
         if mode == INPUT_MODE:
@@ -99,6 +101,8 @@ def function_handler(key):
             
     elif key == 'ENTER' or key == ' ':
         if mode == INPUT_MODE:
+            history_words.append(word)
+            history_word_pointer = len(history_words)-1
             mode = SELECT_MODE
             select_item = 0
         elif mode == SELECT_MODE:
@@ -127,12 +131,32 @@ def function_handler(key):
         if mode == SELECT_MODE:
             select_item -= 1
     elif key == 'KEY_UP':
+        if mode == INPUT_MODE:
+            if history_word_pointer >= 1:
+                history_word_pointer -= 1
+                word = history_words[history_word_pointer]
+                
         if mode == SELECT_MODE:
             mode = INPUT_MODE
+            if history_word_pointer != 0:
+                history_word_pointer -= 1
+                word = history_words[history_word_pointer]
             select_item = -1
         elif mode == DISPLAY_MODE:
             display_item -= 1
     elif key == 'KEY_DOWN':
+        if mode == INPUT_MODE:
+            if history_word_pointer != len(history_words)-1:
+                history_word_pointer += 1
+                word = history_words[history_word_pointer]
+
+        if mode == SELECT_MODE:
+            mode = INPUT_MODE
+            if history_word_pointer != len(history_words)-1:
+                history_word_pointer += 1
+                word = history_words[history_word_pointer]   
+            select_item = -1
+            
         if mode == DISPLAY_MODE:
             display_item += 1
 
