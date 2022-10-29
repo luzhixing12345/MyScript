@@ -8,15 +8,18 @@ SCRIPTS_POSITION = './scripts'                             # json scripts conten
 
 # change color: https://rich.readthedocs.io/en/stable/appendix/colors.html
 TITLE_NAME = 'MyScript'
-TITLE_COLOR = 'blue'
+# TITLE_COLOR = 'dodger_blue2'
 TITLE_POSITION = 'center'
 # ---
 CMD_PROMPT = '[MyScript]'                                  # show in command line prompt
 CMD_PROMPT_COLOR = 'cyan'                                  # prompt color
+INPUT_ACTIVE_STYLE = 'grey15'
 # ---
-ITEM_COLOR = 'grey50'
-ITEM_PADDING = (0,2)
-
+SELECT_ITEM_LANGUAGE_COLOR = 'yellow'
+SELECTED_ITEM_PADDING = (0,2)
+SELECTED_ITEM_COLOR = 'grey15'
+# ---
+DISPLAY_ACTIVE_STYLE = 'yellow on grey19'
 # --------------------------------------------------------
 # Keyboard input handler
 # https://github.com/luzhixing12345/keyboardmap
@@ -54,6 +57,8 @@ DISPLAY_MODE = 2
 RUN_MODE = 3
 
 # --------------------------------------------------------
-# program focus mode
+# display active position
 # --------------------------------------------------------
-
+HEADER = 'HEADER'
+MD_DOC = 'MD-DOC'
+CODE = 'CODE'

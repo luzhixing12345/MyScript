@@ -2,12 +2,14 @@
     "name": "opencv",
     "type": "INSTALL",
     "language": "python",
-    "keywords": ["opencv","cv","cv2","image","video"],
+    "keywords": ["cv","cv2","image","video"],
     "packageManager": ["pip","conda"],
     "action": ["pip install opencv-python"],
     "import" : ["import cv2"],
     "repository": "https://github.com/opencv/opencv-python",
-    "document": ["https://docs.opencv.org/4.x/"],
+    "document": {
+        "offical document":"https://docs.opencv.org/4.x/"
+    },
     "usage": {
         "code": [
             "./example1.py",

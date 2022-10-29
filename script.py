@@ -13,6 +13,7 @@ from rich.console import Console
 from rich.table import Table
 from rich.syntax import Syntax
 from rich.markdown import Markdown
+from config import SELECT_ITEM_LANGUAGE_COLOR
 
 class ScriptParser:
     # parse json file in to script action
@@ -21,30 +22,29 @@ class ScriptParser:
         self.actions = []
         self.root = root
         self.file_name = name
+        self.md_contents = []
+        
         self.load(os.path.join(root,name))
         
     def handle_script(self):
+        if 'usage' not in self.script.keys():
+            return
         
-        # load from json file
-        #"usage": {
-        #     "code": [
-        #         "./example1.py",
-        #         "./example2.py"
-        #     ],
-        #     "md-doc" : [
-        #         "./cv.md"
-        #     ]
-        # }
         for usage_type,example_paths in self.script['usage'].items():
             for i in range(len(example_paths)):
                 relative_path = os.path.join(self.root,example_paths[i])
+
+                # render by rich
                 if usage_type == 'code':
                     render = Syntax.from_path(relative_path)
-                else: # md-doc
-                    content = ''
+                elif usage_type == 'md-doc':
                     with open(relative_path,'r') as f:
-                        content.join(f.readlines())
+                        # only collect keyword in markdown file instead of code
+                        content = f.read()
+                        self.md_contents += content.split(' ')
                     render = Markdown(content)
+                else:
+                    raise "unsupported document type" + usage_type
                 self.script['usage'][usage_type][i] = render
     
     def load(self,args):
@@ -59,6 +59,7 @@ class ScriptParser:
         else:
             raise "unknown argument" + args
         self.handle_script()
+        self.check_matched_keywords()
         
     def execute(self):
         # execute script
@@ -72,8 +73,13 @@ class ScriptParser:
     def parse_action(self):
         pass
     
+    def check_matched_keywords(self):
+        match_field = self.script['keywords'] + [self.script['language']] + [self.script['name']]
+        self.matched_keywords = list(set(self.md_contents + match_field))
+        
+    
     def display(self):
-        return f"[b]{self.script['name']}[/b]\n[yellow]{self.script['type']}"
+        return f"[{SELECT_ITEM_LANGUAGE_COLOR}]{self.script['name']}[/]\n[b]({self.script['language']})[/b]"
 
 
 class EnvironmentInfo:
