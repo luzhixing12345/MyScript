@@ -12,7 +12,7 @@ Type what you want, `MyScript` will save your time for searching:
 
 ## Introduction
 
-## Usage
+## Usage (Linux Only)
 
 ### Requirement
 

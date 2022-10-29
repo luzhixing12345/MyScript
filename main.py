@@ -1,12 +1,14 @@
 
 import argparse
+import threading
+import os
 from rich.console import Console
 from rich.columns import Columns
 from rich.live import Live
 from rich.panel import Panel
 from rich.console import Group
-from env_setup import *
-from script import ScriptParser
+from config import *
+from script import ScriptParser,EnvironmentInfo
 from keyboardhandler.keyinput import KeyInput
 s = ['1','12','13','23','24','25','15','34','35']
 
@@ -19,9 +21,19 @@ history_word_pointer = -1
 mode = INPUT_MODE             # [INPUT_MODE,SELECT_MODE,DISPLAY_MODE,'RUN'] (see more info in env_setup.py)
 select_item = -1              # selected item in SELECT_MODE
 display_item = -1             # displayed item in DISPLAY_MODE
-all_scripts = {}              # all scripts from ./scripts
+all_scripts = []              # all scripts from ./scripts
 keyboard = KeyInput()         # get keyboard input
 # --------------------------------------------------------
+
+def load_scripts():
+    global all_scripts
+    for root,_,files in os.walk(SCRIPTS_POSITION,topdown=False):
+        for name in files:
+            if not name.endswith('.json'):
+                continue
+            script = ScriptParser(root,name)
+            all_scripts.append(script)
+    # print("scripts loaded")
 
 def main(args):
 
@@ -30,11 +42,14 @@ def main(args):
     # if args.g:
     #     set_global()
     
-    script = ScriptParser()
-    script.environment_check()
-
-    conda_env_name = script.system_info['Conda']['EnvName'] if script.use_conda else ''
-    commandline_prompt = f"[b {CMD_PROMPT_COLOR}]({conda_env_name}){CMD_PROMPT}: "
+    script_loading = threading.Thread(target=load_scripts)
+    script_loading.start()
+    
+    system_info = EnvironmentInfo()
+    # system_info.info()
+    # conda_env_name = system_info.conda_name if system_info.use_conda else ''
+    
+    commandline_prompt = f"[b {CMD_PROMPT_COLOR}]{CMD_PROMPT}: "
     
     console = Console()
     console.print(Panel(f"[b]{TITLE_NAME}[/b] [magenta]v{VERSION}[/]\n\n[dim]script for auto environment setup in the terminal",style=f"on {TITLE_COLOR}"),justify=TITLE_POSITION)
@@ -51,7 +66,6 @@ def main(args):
 # def set_global():
 #     pass
 
-
 def input_handler(commandline_prompt):
     global word, mode, select_item
     with keyboard as k:
@@ -63,6 +77,7 @@ def input_handler(commandline_prompt):
     else :
         # unsupported keyboard input
         pass
+    
     pannel = Panel(commandline_prompt + f"{word}")
     results = search_result()
     column = Columns([Panel(r,padding=ITEM_PADDING) for r in results])
@@ -75,11 +90,16 @@ def input_handler(commandline_prompt):
     return Group(pannel,column)
 
 def search_result():
-    global s    
+    global all_scripts,word
     result = []
-    for i in s:
-        if word in i:
-            result.append(i)
+    if word == '':
+        return result
+    for script in all_scripts:
+        script:ScriptParser
+        for keyword in script.script['keywords']:
+            if word in keyword:
+                result.append(script.display())
+                break
 
     return result
 
