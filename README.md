@@ -10,7 +10,7 @@ Type what you want, `MyScript` will save your time for searching:
 - how to install
 - where to find offical document
 
-## Introduction
+## Introduction [Bilibili](https://www.bilibili.com/video/BV1qe4y147Xj/)
 
 ![intro](doc/intro.gif)
 
