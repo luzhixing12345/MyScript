@@ -2,7 +2,7 @@
 import argparse
 import threading
 import os
-from time import sleep
+import sys
 from rich.console import Console
 from rich.columns import Columns
 from rich.live import Live
@@ -33,7 +33,13 @@ console = Console()
 
 def load_scripts():
     global all_scripts
-    for root,_,files in os.walk(os.path.join(ABSOLUATE_PATH,SCRIPTS_POSITION),topdown=False):
+    if sys.argv[0] == 'main.py' or sys.argv[0] == './main.py':
+        json_path = SCRIPTS_POSITION
+    else:
+        json_path = '/'
+        json_path = json_path.join(sys.argv[0].split('/')[:-1]) + "/" + SCRIPTS_POSITION
+    print(json_path)
+    for root,_,files in os.walk(json_path,topdown=False):
         for name in files:
             if not name.endswith('.json'):
                 continue
@@ -48,7 +54,7 @@ def main(args):
         python_path = system_info.system_info['Conda']['PythonPath']
         absolute_path = os.getcwd()
         home_path = system_info.system_info['OS']['Home']
-        with open("config.py",'a') as f:
+        with open("config",'a') as f:
             f.write("\nABSOLUATE_PATH = \""+absolute_path+"\"")
         with open(os.path.join(home_path,'.bashrc'),'a') as f:
             f.write("\nmsp(){ "+python_path+" "+absolute_path+"/main.py;}")
@@ -59,8 +65,6 @@ def main(args):
     
     script_loading = threading.Thread(target=load_scripts)
     script_loading.start()
-    
-    
     # system_info.info()
     # conda_env_name = system_info.conda_name if system_info.use_conda else ''
     
@@ -89,7 +93,10 @@ def input_handler(commandline_prompt):
         pass
     
     input_style = f"on {INPUT_ACTIVE_STYLE}" if mode == INPUT_MODE else "none"
-    search_part = Panel(commandline_prompt + f"{word}[blink]|[/blink]",style=input_style)
+    if mode == INPUT_MODE:
+        search_part = Panel(commandline_prompt + f"{word}[blink]|[/blink]",style=input_style)
+    else:
+        search_part = Panel(commandline_prompt + f"{word}",style=input_style)
     display_part = get_display_part()
     
     if type(display_part) is Layout:
