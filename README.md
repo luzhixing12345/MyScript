@@ -28,6 +28,16 @@ pip install rich
 python main.py
 ```
 
+### Keyboard Use
+
+<kbd>enter</kbd> for step in
+
+<kbd>Esc</kbd> for step back
+
+in SELECT MODE you could use <kbd>left</kbd> or <kbd>right</kbd> to choose
+
+in DISPLAY MODE you could use <kbd>Tab</kbd> to move, and use <kbd>left</kbd> or <kbd>right</kbd> to change example
+
 ### Other options
 
 - Set global
@@ -52,9 +62,8 @@ Hope for your contribution and expecially thanks for your contribution!
 ### Contribute for information
 
 - fork this repo
-- create a json file under `configuration` in the corresponding position
-- read the corresponding README file first to find what the json file should include
-- finsh your json and DO **NOT** run build.py
+- create a json file under `./scripts`
+- finsh your json
 - create a new pull request
 
 ## Develop Reference
