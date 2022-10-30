@@ -19,7 +19,20 @@ SELECT_ITEM_LANGUAGE_COLOR = 'yellow'
 SELECTED_ITEM_PADDING = (0,2)
 SELECTED_ITEM_COLOR = 'grey15'
 # ---
+DISPLAY_LAYOUT_HEADER_SIZE = 3
+DISPLAY_LAYOUT_MAIN_RATIO = 1
+DISPLAY_LAYOUT_BODY_RATIO = 8
+DISPLAY_LAYOUT_BODY_MINSIZE = 60
+
 DISPLAY_ACTIVE_STYLE = 'yellow on grey19'
+DISPLAY_CODE_THEME = 'one-dark'
+DISPLAY_CODE_BACKGROUND = 'default'
+DISPLAY_SHOW_LINE_NUMBER = True
+DISPLAY_LINK_COLOR = 'white'
+DISPLAY_INFO_COLOR = "green"
+DISPLAY_INFO_JUSTIFY = "right"
+DISPLAY_INFO_TABLE_PADDING = 1
+DISPLAY_INFO_PANEL_PADDING = (1, 2)
 # --------------------------------------------------------
 # Keyboard input handler
 # https://github.com/luzhixing12345/keyboardmap
@@ -39,13 +52,12 @@ NORMAL_CHAR = LOWCASE_CHAR + HIGHCASE_CHAR + DIGIT_CHAR + SPECIAL_CHAR
 FUNCTION_CHAR = [
     'ESC',          # back to last mode
     'BACKSPACE',    # remove the last character
-    'TAB',          # move to next item
-    'KEY_UP',       # 
-    'KEY_DOWN',
-    'KEY_LEFT',
-    'KEY_RIGHT',
-    'ENTER',
-    'SPACE'
+    'KEY_UP',       # history search words
+    'KEY_DOWN',     # history search words
+    'KEY_LEFT',     # last md-doc or code
+    'KEY_RIGHT',    # next md-doc or code
+    'ENTER',        # enter the next mode or run
+    'TAB'           # change active position in DISPLAY MODE
 ]
 
 # --------------------------------------------------------
@@ -62,3 +74,7 @@ RUN_MODE = 3
 HEADER = 'HEADER'
 MD_DOC = 'MD-DOC'
 CODE = 'CODE'
+
+# ---
+
+ABSOLUATE_PATH = '.'

@@ -24,16 +24,16 @@ history_word_pointer:int = -1
 mode:int = INPUT_MODE                   # [INPUT_MODE,SELECT_MODE,DISPLAY_MODE,'RUN'] (see more info in env_setup.py)
 select_item:int = -1                    # selected item in SELECT_MODE
 selected_script:ScriptParser = None 
-display_item:int = -1                   # displayed item in DISPLAY_MODE
 all_scripts:List[ScriptParser] = []     # all scripts from ./scripts
 display_active_position:str = HEADER    # active postion in DISPLAY MODE
-display_body_item:int = -1
+display_body_item:int = 0
 keyboard = KeyInput()                   # get keyboard input
+console = Console()
 # --------------------------------------------------------
 
 def load_scripts():
     global all_scripts
-    for root,_,files in os.walk(SCRIPTS_POSITION,topdown=False):
+    for root,_,files in os.walk(os.path.join(ABSOLUATE_PATH,SCRIPTS_POSITION),topdown=False):
         for name in files:
             if not name.endswith('.json'):
                 continue
@@ -42,36 +42,39 @@ def load_scripts():
     # print("scripts loaded")
 
 def main(args):
-
-    # if args.upgrade:
-    #     upgrade()
-    # if args.g:
-    #     set_global()
+    
+    system_info = EnvironmentInfo()
+    if args.env:
+        python_path = system_info.system_info['Conda']['PythonPath']
+        absolute_path = os.getcwd()
+        home_path = system_info.system_info['OS']['Home']
+        with open("config.py",'a') as f:
+            f.write("\nABSOLUATE_PATH = \""+absolute_path+"\"")
+        with open(os.path.join(home_path,'.bashrc'),'a') as f:
+            f.write("\nmsp(){ "+python_path+" "+absolute_path+"/main.py;}")
+        print("finished!")
+        print("please run \"source ~/.bashrc\" to activate your environment")
+        print("Then you could use \"msg\" to run this program in everywhere")
+        return
     
     script_loading = threading.Thread(target=load_scripts)
     script_loading.start()
     
-    system_info = EnvironmentInfo()
+    
     # system_info.info()
     # conda_env_name = system_info.conda_name if system_info.use_conda else ''
     
     commandline_prompt = f"[b {CMD_PROMPT_COLOR}]{CMD_PROMPT}: "
     
-    console = Console()
+    global console
     console.clear()
     console.print(Panel(f"[b]{TITLE_NAME}[/b] [magenta]v{VERSION}[/]\n\n[dim]script for auto environment setup in the terminal"),justify=TITLE_POSITION)
 
-    with Live(Panel(commandline_prompt,style=f"on {INPUT_ACTIVE_STYLE}"),auto_refresh=False) as live:
-        
+    with Live(Panel(commandline_prompt+'[blink]|[/blink]',style=f"on {INPUT_ACTIVE_STYLE}"),auto_refresh=False) as live:
+        # live.console.print("finish loading")
         while True:
             live.update(input_handler(commandline_prompt))
             live.refresh()
-
-# def upgrade(url):
-#     pass
-
-# def set_global():
-#     pass
 
 def input_handler(commandline_prompt):
     global word, mode, select_item
@@ -86,7 +89,7 @@ def input_handler(commandline_prompt):
         pass
     
     input_style = f"on {INPUT_ACTIVE_STYLE}" if mode == INPUT_MODE else "none"
-    search_part = Panel(commandline_prompt + f"{word}",style=input_style)
+    search_part = Panel(commandline_prompt + f"{word}[blink]|[/blink]",style=input_style)
     display_part = get_display_part()
     
     if type(display_part) is Layout:
@@ -95,7 +98,7 @@ def input_handler(commandline_prompt):
         return Group(search_part,display_part)
 
 def get_display_part():
-    global mode,selected_script,select_item
+    global mode,selected_script,select_item,console
     global display_active_position,display_body_item
     if mode == INPUT_MODE or mode == SELECT_MODE:
         scripts_result = search_result()
@@ -113,10 +116,15 @@ def get_display_part():
                 mode = INPUT_MODE
             
     elif mode == DISPLAY_MODE:
-        
         display_part = make_layout()
         update_layout(display_part,selected_script,display_active_position,display_body_item)
     
+    elif mode == RUN_MODE:
+        with console.screen():
+            selected_script.execute()
+        mode = DISPLAY_MODE
+        display_part = make_layout()
+        update_layout(display_part,selected_script,display_active_position,display_body_item)
     return display_part
 
 
@@ -144,7 +152,7 @@ def match_keyword(search_words,script:ScriptParser):
                 return True
 
 def function_handler(key):
-    global word, mode, select_item,display_item,history_words,history_word_pointer
+    global word, mode, select_item,history_words,history_word_pointer,console
     global display_active_position,display_body_item
     if key == 'ESC':
         # back to the last mode
@@ -157,7 +165,7 @@ def function_handler(key):
         elif mode == DISPLAY_MODE:
             mode = SELECT_MODE
             select_item = 0
-            display_body_item = -1
+            display_body_item = 0
         else:
             mode = DISPLAY_MODE
             
@@ -167,22 +175,22 @@ def function_handler(key):
             history_word_pointer = len(history_words)-1
             mode = SELECT_MODE
             select_item = 0
+            
         elif mode == SELECT_MODE:
             mode = DISPLAY_MODE
             select_item = -1
             display_active_position = HEADER
+            
         elif mode == DISPLAY_MODE:
             if display_active_position == HEADER:
                 mode = RUN_MODE
                 
-        elif mode == RUN_MODE:
-            # run!
-            pass
         
     elif key == 'BACKSPACE':
         if mode == INPUT_MODE:
             # delete the last character
             word = word[:-1]
+            
     elif key == 'KEY_RIGHT':
         # next item
         if mode == SELECT_MODE:
@@ -213,8 +221,7 @@ def function_handler(key):
                 history_word_pointer -= 1
                 word = history_words[history_word_pointer]
             select_item = -1
-        elif mode == DISPLAY_MODE:
-            display_item -= 1
+
     elif key == 'KEY_DOWN':
         if mode == INPUT_MODE:
             if history_word_pointer != len(history_words)-1:
@@ -228,12 +235,11 @@ def function_handler(key):
                 word = history_words[history_word_pointer]   
             select_item = -1
             
-        if mode == DISPLAY_MODE:
-            display_item += 1
             
     elif key == 'TAB':
         # only active in DISPLAY MODE
         # change between four HEADER | MD_DOC | CODE | BODY
+        # print(display_active_position)
         if mode == DISPLAY_MODE:
             if display_active_position == HEADER:
                 display_active_position = MD_DOC
@@ -246,7 +252,6 @@ def function_handler(key):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='script for auto environment setup')
-    parser.add_argument('--upgrade',action='store_true',help='get the lastest MyScript.py')
-    parser.add_argument('-g',action='store_true',help='set MyScript.py a global varable')
+    parser.add_argument('-e',"--env",action='store_true',help='set MyScript global to run')
     args = parser.parse_args()
     main(args)

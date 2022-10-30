@@ -14,12 +14,12 @@ def make_layout() -> Layout:
     layout = Layout(name="root")
 
     layout.split(
-        Layout(name="header", size=3),
-        Layout(name="main", ratio=1),
+        Layout(name="header", size=DISPLAY_LAYOUT_HEADER_SIZE),
+        Layout(name="main", ratio=DISPLAY_LAYOUT_MAIN_RATIO),
     )
     layout["main"].split_row(
         Layout(name="side",size=None),
-        Layout(name="body",ratio=8, minimum_size=60),
+        Layout(name="body",ratio=DISPLAY_LAYOUT_BODY_RATIO, minimum_size=DISPLAY_LAYOUT_BODY_MINSIZE),
     )
     layout["side"].split(Layout(name="md-doc"), Layout(name="code"))
     return layout
@@ -45,11 +45,11 @@ def update_layout(layout:Layout, script:ScriptParser, active_position:str, index
     layout['header'].update(Panel(header_content,style=active_style['HEADER']))
     layout['md-doc'].update(Panel('[b]md-doc[/b]',style=active_style['MD-DOC']))
     layout['code'].update(Panel('[b]code[/b]',style=active_style['CODE']))
-    
+
     if active_position == HEADER:
     
-        script_info = Table.grid(padding=1)
-        script_info.add_column(style="green", justify="right")
+        script_info = Table.grid(padding=DISPLAY_INFO_TABLE_PADDING)
+        script_info.add_column(style=DISPLAY_INFO_COLOR, justify=DISPLAY_INFO_JUSTIFY)
         script_info.add_column(no_wrap=True)
         
         # add script info
@@ -63,15 +63,18 @@ def update_layout(layout:Layout, script:ScriptParser, active_position:str, index
                 vertical="middle",
             ),
             box=box.ROUNDED,
-            padding=(1, 2),
+            padding=DISPLAY_INFO_PANEL_PADDING,
             title="[b red]Introduction for "+script.script['name'],
         )
     elif active_position == MD_DOC or active_position == CODE:
         render_number = len(script.script['usage'][active_position.lower()])
         index = (index+render_number)%render_number
-        body = script.script['usage'][active_position.lower()][index]
+        body = Panel(
+                script.script['usage'][active_position.lower()][index]['render'],
+                title="[b red] "+script.script['usage'][active_position.lower()][index]['path']+f" <{index+1}/{render_number}>"
+            )
     
     layout['body'].update(body)
     
 def create_link(url):
-    return f"[u blue link={url}]{url}"
+    return f"[u {DISPLAY_LINK_COLOR} link={url}]{url}"

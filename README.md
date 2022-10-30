@@ -12,6 +12,8 @@ Type what you want, `MyScript` will save your time for searching:
 
 ## Introduction
 
+![intro](doc/intro.gif)
+
 ## Usage (Linux Only)
 
 ### Requirement
@@ -28,18 +30,14 @@ python main.py
 
 ### Other options
 
-- get the lastest file to upgrade
+- Set global
 
   ```bash
-  python MyScript.py --upgrade
+  python main.py -e
+  source ~/.bashrc
   ```
 
-- Set global environment variables for `MyScript.py` to use shorter
-
-  ```bash
-  python MyScript.py -> myscript
-  python MyScript.py --upgrade -> myscript -upgrade
-  ```
+  Then you could use `msg` to run this program in everywhere
 
 ## Support
 

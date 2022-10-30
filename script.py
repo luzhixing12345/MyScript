@@ -13,13 +13,13 @@ from rich.console import Console
 from rich.table import Table
 from rich.syntax import Syntax
 from rich.markdown import Markdown
-from config import SELECT_ITEM_LANGUAGE_COLOR
+from config import DISPLAY_CODE_BACKGROUND, DISPLAY_CODE_THEME, DISPLAY_SHOW_LINE_NUMBER, SELECT_ITEM_LANGUAGE_COLOR
+
+
 
 class ScriptParser:
     # parse json file in to script action
     def __init__(self,root,name) -> None:
-        
-        self.actions = []
         self.root = root
         self.file_name = name
         self.md_contents = []
@@ -32,11 +32,20 @@ class ScriptParser:
         
         for usage_type,example_paths in self.script['usage'].items():
             for i in range(len(example_paths)):
-                relative_path = os.path.join(self.root,example_paths[i])
-
+                path = example_paths[i]
+                relative_path = os.path.join(self.root,path)
+                self.script['usage'][usage_type][i] = {}
+                
                 # render by rich
                 if usage_type == 'code':
-                    render = Syntax.from_path(relative_path)
+                    render = Syntax.from_path(
+                                relative_path,
+                                line_numbers=DISPLAY_SHOW_LINE_NUMBER,
+                                theme=DISPLAY_CODE_THEME,
+                                background_color=DISPLAY_CODE_BACKGROUND,
+                                word_wrap = True,
+                                indent_guides = True
+                            )
                 elif usage_type == 'md-doc':
                     with open(relative_path,'r') as f:
                         # only collect keyword in markdown file instead of code
@@ -45,7 +54,8 @@ class ScriptParser:
                     render = Markdown(content)
                 else:
                     raise "unsupported document type" + usage_type
-                self.script['usage'][usage_type][i] = render
+                self.script['usage'][usage_type][i]['render'] = render
+                self.script['usage'][usage_type][i]['path'] = path.split('/')[-1]
     
     def load(self,args):
         # load script from json file or dict
@@ -63,8 +73,7 @@ class ScriptParser:
         
     def execute(self):
         # execute script
-        self.parse_action()
-        for action in self.actions:
+        for action in self.script['action']:
             try:
                 os.system(action)
             except Exception as e:

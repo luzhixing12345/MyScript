@@ -1,0 +1,23 @@
+{
+    "name": "rich",
+    "type": "INSTALL",
+    "language": "python",
+    "keywords": ["rich","console","print","table","progress","fill","style"],
+    "packageManager": ["pip"],
+    "action": ["pip install rich"],
+    "import" : ["import cv2"],
+    "repository": "https://github.com/Textualize/rich",
+    "document": {
+        "offical document":"https://rich.readthedocs.io/en/latest/",
+        "offical Chinese README": "https://github.com/textualize/rich/blob/master/README.cn.md"
+    },
+    "usage": {
+        "code": [
+            "./example1.py",
+            "./example2.py"
+        ],
+        "md-doc" : [
+            "./rich.md"
+        ]
+    }
+}
