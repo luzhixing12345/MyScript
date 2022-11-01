@@ -104,7 +104,7 @@ class EnvironmentInfo:
         SYSTEM_INFO['PC']['User'] = os.environ['LOGNAME']
         SYSTEM_INFO['PC']['Machine'] = platform.machine()
         SYSTEM_INFO['PC']['Network'] = platform.node()
-        SYSTEM_INFO['PC']['HostIP'] = os.environ['host_ip']
+        #SYSTEM_INFO['PC']['HostIP'] = os.environ['host_ip']
         SYSTEM_INFO['PC']['Processor'] = platform.processor()
         SYSTEM_INFO['PC']['Release'] = platform.release()
         SYSTEM_INFO['OS']['Type'] = platform.system()
@@ -112,7 +112,7 @@ class EnvironmentInfo:
         SYSTEM_INFO['OS']['Version'] = platform.version()
         SYSTEM_INFO['OS']['Bit'] = platform.architecture()
         SYSTEM_INFO['OS']['Home'] = os.environ['HOME']
-        SYSTEM_INFO['OS']['HostType'] = os.environ['HOSTTYPE']
+        #SYSTEM_INFO['OS']['HostType'] = os.environ['HOSTTYPE']
         # Python
         SYSTEM_INFO['Conda']['PythonPath'] = os.environ['_']
         # if pure python without anaconda, recommand conda
