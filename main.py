@@ -69,9 +69,9 @@ def main(args):
     script_loading.start()
     
     if args.add:
+        script_loading.join()
         script = Script()
         script.generate(scripts_path)
-        script_loading.join()
         print(f"Successfully create a new script [{script.script_name}]!")
         return
     # system_info.info()

@@ -31,7 +31,10 @@ class ScriptParser:
 
         for usage_type, example_paths in self.script['usage'].items():
             for i in range(len(example_paths)):
-                path = example_paths[i]
+                path:str = example_paths[i]
+                path = path.strip()
+                if path == '':
+                    continue
                 relative_path = os.path.join(self.root, path)
                 self.script['usage'][usage_type][i] = {}
 
