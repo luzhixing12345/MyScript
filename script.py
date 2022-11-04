@@ -13,6 +13,8 @@ from rich.console import Console
 from rich.table import Table
 from rich.syntax import Syntax
 from rich.markdown import Markdown
+from rich.prompt import Prompt
+from rich.panel import Panel
 from config import DISPLAY_CODE_BACKGROUND, DISPLAY_CODE_THEME, DISPLAY_SHOW_LINE_NUMBER, SELECT_ITEM_LANGUAGE_COLOR
 
 
@@ -150,32 +152,58 @@ class EnvironmentInfo:
 
 class Script:
 
-    def __init__(self) -> None:
-
+    def __init__(self,root_path) -> None:
+        self.root_path = root_path
         self.script_name = 'scp.json'
         self.script_template = {
-            "name": " ",
-            "type": " ",
-            "language": " ",
-            "keywords": [" "],
-            "packageManager": [" "],
-            "action": [" "],
-            "import": [" "],
-            "repository": " ",
+            "name": "",
+            "type": "",
+            "language": "",
+            "keywords": [],
+            "packageManager": [],
+            "action": [],
+            "import": [],
+            "repository": "",
             "document": {
-                "offical document": " "
+                "offical document": ""
             },
             "usage": {
                 "code": [
-                    " "
+                    ""
                 ],
                 "md-doc": [
-                    " "
+                    ""
                 ]
             }
         }
 
-    def generate(self,root_path):
-        path = os.path.join(root_path,self.script_name)
+    def generate(self):
+        path = os.path.join(self.root_path,self.script_name)
         with open(path, 'w') as f:
             json.dump(self.script_template, f)
+
+
+    def get_info(self):
+        console = Console()
+        console.print(Panel('Add new Script'))
+        name = Prompt.ask("Enter script name")
+        type = Prompt.ask("Enter script type", choices=["INSTALL", "DOC", "TASK"], default="INSTALL")
+        if type == 'INSTALL':
+            language = Prompt.ask("Enter script language")
+        self._handle_list_input('keywords','keywords for searching')
+        self._handle_list_input('packageManager','package manger the language use')
+        self._handle_list_input('action','script actions to run')
+        self._handle_list_input('import','how to import this package')
+        repository = Prompt.ask("Enter script repository")
+
+    def _handle_list_input(self,name,desciption=''):
+        results = []
+        if desciption == '':
+            hint_word = name
+        else:
+            hint_word = desciption
+        result = Prompt.ask(f"Enter {hint_word} (type ENTER to escape)")
+        while result != '':
+            results.append(result)
+            result = Prompt.ask(f"Enter {hint_word} (type ENTER to escape)")
+        self.script_template[name] = results

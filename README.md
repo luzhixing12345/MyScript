@@ -49,6 +49,12 @@ in DISPLAY MODE you could use <kbd>Tab</kbd> to move, and use <kbd>left</kbd> or
 
   Then you could use `msg` to run this program in everywhere
 
+- Add new script
+
+  ```bash
+  msp -a
+  ```
+
 ## Support
 
 ![Conda](https://img.shields.io/badge/conda-342B029.svg?&style=for-the-badge&logo=anaconda&logoColor=white)

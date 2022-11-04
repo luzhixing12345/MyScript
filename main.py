@@ -70,9 +70,10 @@ def main(args):
     
     if args.add:
         script_loading.join()
-        script = Script()
-        script.generate(scripts_path)
-        print(f"Successfully create a new script [{script.script_name}]!")
+        script = Script(scripts_path)
+        script.get_info()
+        # script.generate()
+        # print(f"Successfully create a new script [{script.script_name}]!")
         return
     # system_info.info()
     # conda_env_name = system_info.conda_name if system_info.use_conda else ''
