@@ -9,9 +9,10 @@ from rich.live import Live
 from rich.panel import Panel
 from rich.console import Group
 from rich.layout import Layout
+from rich.text import Text
 from config import *
 from layout import *
-from script import ScriptParser,EnvironmentInfo
+from script import ScriptParser,EnvironmentInfo,Script
 from keyboardhandler.keyinput import KeyInput
 from typing import List
 
@@ -31,15 +32,9 @@ keyboard = KeyInput()                   # get keyboard input
 console = Console()
 # --------------------------------------------------------
 
-def load_scripts():
+def load_scripts(script_path:str):
     global all_scripts
-    if sys.argv[0] == 'main.py' or sys.argv[0] == './main.py':
-        json_path = SCRIPTS_POSITION
-    else:
-        json_path = '/'
-        json_path = json_path.join(sys.argv[0].split('/')[:-1]) + "/" + SCRIPTS_POSITION
-    print(json_path)
-    for root,_,files in os.walk(json_path,topdown=False):
+    for root,_,files in os.walk(script_path,topdown=False):
         for name in files:
             if not name.endswith('.json'):
                 continue
@@ -51,20 +46,34 @@ def main(args):
     
     system_info = EnvironmentInfo()
     if args.env:
+        # set MyScript to path
         python_path = system_info.system_info['Conda']['PythonPath']
         absolute_path = os.getcwd()
         home_path = system_info.system_info['OS']['Home']
-        with open("config",'a') as f:
-            f.write("\nABSOLUATE_PATH = \""+absolute_path+"\"")
         with open(os.path.join(home_path,'.bashrc'),'a') as f:
-            f.write("\nmsp(){ "+python_path+" "+absolute_path+"/main.py;}")
+            f.write("\nmsp(){ "+python_path+" "+absolute_path+"/main.py $1;}")
         print("finished!")
         print("please run \"source ~/.bashrc\" to activate your environment")
         print("Then you could use \"msg\" to run this program in everywhere")
         return
     
-    script_loading = threading.Thread(target=load_scripts)
+    # parse python path
+    if sys.argv[0] == 'main.py' or sys.argv[0] == './main.py':
+        scripts_path = SCRIPTS_POSITION
+    else:
+        scripts_path = '/'
+        scripts_path = scripts_path.join(sys.argv[0].split('/')[:-1]) + "/" + SCRIPTS_POSITION
+        
+    # start a thread for file loading
+    script_loading = threading.Thread(target=load_scripts,args=(scripts_path,))
     script_loading.start()
+    
+    if args.add:
+        script = Script()
+        script.generate(scripts_path)
+        script_loading.join()
+        print(f"Successfully create a new script [{script.script_name}]!")
+        return
     # system_info.info()
     # conda_env_name = system_info.conda_name if system_info.use_conda else ''
     
@@ -119,8 +128,9 @@ def get_display_part():
                 display_part.renderables[select_item].style = f"on {SELECTED_ITEM_COLOR}"
                 selected_script = scripts_result[select_item] # get the selected script
             else:
-                # no matched result, back to INPUT MODE
-                mode = INPUT_MODE
+                # no matched result, ask if need to create new script
+                select_item = -1
+                return Text(f"No result \'{word}\'found, use \"-a\" to add new script, or ESC to step back",justify='center')
             
     elif mode == DISPLAY_MODE:
         display_part = make_layout()
@@ -133,8 +143,6 @@ def get_display_part():
         display_part = make_layout()
         update_layout(display_part,selected_script,display_active_position,display_body_item)
     return display_part
-
-
 
 
 def search_result() -> List[ScriptParser]:
@@ -184,6 +192,8 @@ def function_handler(key):
             select_item = 0
             
         elif mode == SELECT_MODE:
+            if select_item == -1: # no result
+                return
             mode = DISPLAY_MODE
             select_item = -1
             display_active_position = HEADER
@@ -191,7 +201,6 @@ def function_handler(key):
         elif mode == DISPLAY_MODE:
             if display_active_position == HEADER:
                 mode = RUN_MODE
-                
         
     elif key == 'BACKSPACE':
         if mode == INPUT_MODE:
@@ -260,5 +269,6 @@ def function_handler(key):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='script for auto environment setup')
     parser.add_argument('-e',"--env",action='store_true',help='set MyScript global to run')
+    parser.add_argument('-a',"--add",action='store_true',help='add json config script for MyScript')
     args = parser.parse_args()
     main(args)
